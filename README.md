@@ -6,3 +6,5 @@ Collection of helper scripts for BI(E)-OOP classes
 
 `clone-repl.sh` - clone repositories in a REPL
 
+`copy_new_semester.sh` - copy all specified repositories to a new semester folder
+
