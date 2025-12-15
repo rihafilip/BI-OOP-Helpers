@@ -1,5 +1,7 @@
 #!/bin/bash
 
+SCRIPTPATH=$(realpath $(dirname "$0"))
+
 while :
 do
   echo 'Repo'
@@ -8,5 +10,5 @@ do
   echo 'Hash'
   read hash
 
-  ./clone.sh "$repo" "$hash"
+  "$SCRIPTPATH/clone.sh" "$repo" "$hash"
 done
