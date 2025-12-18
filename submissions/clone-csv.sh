@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+set -e
+
+SCRIPTPATH=$(realpath $(dirname "$0"))
+
 if [[ -z "$1" ]]; then
   echo "Missing input file"
   exit 1
@@ -14,5 +18,5 @@ mlr --csv --headerless-csv-output \
   cut -f "$GIT_URL_COLUMN","$COMMIT_COLUMN" \
   "$INPUT_FILE" \
   | while IFS=',' read -r REPOSITORY COMMIT; do
-    ./clone "$REPOSITORY" "$COMMIT"
+    "$SCRIPTPATH/clone.sh" "$REPOSITORY" "$COMMIT"
   done

@@ -1,4 +1,4 @@
-FROM sbtscala/scala-sbt:eclipse-temurin-jammy-17.0.10_7_1.10.1_3.5.0
+FROM sbtscala/scala-sbt:eclipse-temurin-17.0.15_6_1.11.5_3.7.2
 
 # Install dependencies
 RUN apt-get update

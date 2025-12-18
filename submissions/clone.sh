@@ -2,33 +2,63 @@
 
 set -e
 
+CONTAINER_NAME="oop-corrector"
+
 if [[ -z "$1" ]]; then
-  echo "Missing args"
+  echo "Missing repository"
   exit 1
 elif [[ -z "$2" ]]; then
-  echo "Missing hash"
+  echo "Missing commit"
   exit 1
 fi
 
-username=$(echo "$1" | rg 'https://gitlab.fit.cvut.cz/([^/]*)/(.*)' -or '$1')
-repo=$(    echo "$1" | rg 'https://gitlab.fit.cvut.cz/([^/]*)/(.*)' -or '$2')
+REPOSITORY="$1"
+COMMIT="$2"
 
-if $(echo $repo | rg -q '.*\.git' ); then
-  repo=$repo
+# Fixup the repo from http to ssh
+if echo "$REPOSITORY" | rg -q 'https://gitlab.fit.cvut.cz/'; then
+  FULLPATH=$(echo "$REPOSITORY" | rg 'https://gitlab.fit.cvut.cz/([^\.]*)(.git)?' -or '$1')
+  REPOSITORY="git@gitlab.fit.cvut.cz:$FULLPATH.git"
+
+elif echo "$REPOSITORY" | rg -q 'git@gitlab.fit.cvut.cz:.*\.git'; then
+  FULLPATH=$(echo $REPOSITORY | rg 'git@gitlab.fit.cvut.cz:(.*)\.git' -or '$1')
+
 else
-  repo="$repo.git"
+  echo "Malformed repository"
+  exit 1
 fi
 
-sshlink="git@gitlab.fit.cvut.cz:$username/$repo"
+# Extract the student name
+DIRNAME=$(echo "$REPOSITORY" | rg ".*/([^/]+)\.git" -or '$1')
+if [[ -z "$DIRNAME" ]]; then
+  echo "Dirname is empty"
+  exit 1
+fi
 
-dirname=$(echo "$repo" | rg ".*/([^/]+)\.git" -or '$1')
+# Log
+echo "REPOSITORY=$REPOSITORY"
+echo "DIRNAME=$DIRNAME"
+echo "COMMIT=$2"
 
-echo "username=$username"
-echo "sshlink=$sshlink"
-echo "commit=$2"
+# Clone and checkout
+if [[ -e "$DIRNAME" ]]; then
+  echo "Already cloned"
+else
+  git clone "$REPOSITORY" "$DIRNAME" > /dev/null
 
-git clone "$sshlink" "$dirname"
+  cd "$DIRNAME"
 
-cd "$dirname"
+  git checkout -b "Submission" "$COMMIT" > /dev/null
+fi
 
-git checkout -b "Submission" "$2"
+
+# Run the test container
+# docker run --mount type=bind,source=$SSH_AUTH_SOCK,target=/ssh-agent \
+#             --env SSH_AUTH_SOCK=/ssh-agent \
+#             --env REPOSITORY="$REPOSITORY" \
+#             --env COMMIT="$COMMIT" \
+#             $CONTAINER_NAME 2>&1 | tee ./test_output
+
+# Open the repo
+
+xdg-open "https://gitlab.fit.cvut.cz/$FULLPATH"
