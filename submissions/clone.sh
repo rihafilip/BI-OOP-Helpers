@@ -29,6 +29,6 @@ echo "commit=$2"
 
 git clone "$sshlink" "$dirname"
 
-cd "$username"
+cd "$dirname"
 
 git checkout -b "Submission" "$2"
