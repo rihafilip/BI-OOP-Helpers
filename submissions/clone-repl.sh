@@ -1,6 +1,12 @@
 #!/bin/bash
+# Usage:
+#
+#   ./clone-repl.sh [clone_base_directory]
+#
 
 SCRIPTPATH=$(realpath $(dirname "$0"))
+
+BASEDIR="$1" # can be empty
 
 while :
 do
@@ -10,5 +16,5 @@ do
   echo 'Hash'
   read hash
 
-  "$SCRIPTPATH/clone.sh" "$repo" "$hash"
+  "$SCRIPTPATH/clone.sh" "$repo" "$hash" "$BASEDIR"
 done

@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+#
+#   ./clone-csv.sh csv-file [clone_base_directory]
+#
+# Environment variables:
+#   SEP - the separator of input csv-file, by default comma ","
+#
 
 set -e
 
@@ -10,13 +16,17 @@ if [[ -z "$1" ]]; then
 fi
 
 INPUT_FILE="$1"
+BASEDIR="$2" # can be empty
+
+if [[ -z "$SEP" ]]; then
+  SEP=comma
+fi
 
 GIT_URL_COLUMN="Git clone URL"
 COMMIT_COLUMN="The whole commit hash we should consider"
 
-mlr --csv --headerless-csv-output \
-  cut -f "$GIT_URL_COLUMN","$COMMIT_COLUMN" \
-  "$INPUT_FILE" \
+cat "$INPUT_FILE" \
+  | mlr --csv --headerless-csv-output --ofs=comma --ifs=$SEP cut -f "$GIT_URL_COLUMN,$COMMIT_COLUMN" \
   | while IFS=',' read -r REPOSITORY COMMIT; do
-    "$SCRIPTPATH/clone.sh" "$REPOSITORY" "$COMMIT"
+    "$SCRIPTPATH/clone.sh" "$REPOSITORY" "$COMMIT" "$BASEDIR"
   done

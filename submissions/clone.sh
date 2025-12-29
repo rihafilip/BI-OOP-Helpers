@@ -1,4 +1,8 @@
 #!/bin/bash
+# Usage:
+#
+#   ./clone.sh repository commit [clone_base_directory]
+#
 
 set -e
 
@@ -14,6 +18,13 @@ fi
 
 REPOSITORY="$1"
 COMMIT="$2"
+
+if [[ -n "$3" ]]; then
+  BASEDIR=$(realpath "$3")
+else
+  BASEDIR=$PWD
+fi
+
 
 # Fixup the repo from http to ssh
 if echo "$REPOSITORY" | rg -q 'https://gitlab.fit.cvut.cz/'; then
@@ -35,6 +46,8 @@ if [[ -z "$DIRNAME" ]]; then
   exit 1
 fi
 
+DIRNAME="$BASEDIR/$DIRNAME"
+
 # Log
 echo "REPOSITORY=$REPOSITORY"
 echo "DIRNAME=$DIRNAME"
@@ -51,7 +64,6 @@ else
   git checkout -b "Submission" "$COMMIT" > /dev/null
 fi
 
-
 # Run the test container
 # docker run --mount type=bind,source=$SSH_AUTH_SOCK,target=/ssh-agent \
 #             --env SSH_AUTH_SOCK=/ssh-agent \
@@ -60,5 +72,4 @@ fi
 #             $CONTAINER_NAME 2>&1 | tee ./test_output
 
 # Open the repo
-
-xdg-open "https://gitlab.fit.cvut.cz/$FULLPATH"
+# xdg-open "https://gitlab.fit.cvut.cz/$FULLPATH"
