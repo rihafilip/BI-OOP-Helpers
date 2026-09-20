@@ -12,7 +12,7 @@ tmpdir=$(mktemp -d)
 
 pushd "$tmpdir" > /dev/null
 
-repos="Labs/Lab-1 Labs/Lab-2 Labs/Lab-3 Labs/Dad-Joke-DB Labs/Teacher-notes"
+repos="Labs/Lab-1 Labs/Lab-2 Labs/Lab-3 Labs/Dad-Joke-DB Labs/Teacher-notes semestral-project-template"
 
 for repo in $repos; do
   from="git@gitlab.fit.cvut.cz:BI-OOP/$SOURCE_SEMESTER/$repo.git"
