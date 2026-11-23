@@ -12,7 +12,7 @@
         devShells.default = pkgs.mkShell {
           name = "OOP Submissions";
           buildInputs = with pkgs; [
-            miller
+            python315
           ];
         };
       });

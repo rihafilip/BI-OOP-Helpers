@@ -2,9 +2,9 @@
 
 Collection of helper scripts for BI(E)-OOP classes
 
-`clone.sh` - clone student's repository
+`submissions.py` - clone submissions
 
-`clone-repl.sh` - clone repositories in a REPL
+`docker/` - Docker definition for checking the students repos
 
 `copy_new_semester.sh` - copy all specified repositories to a new semester folder
 
