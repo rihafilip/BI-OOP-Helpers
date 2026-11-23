@@ -72,12 +72,35 @@ def do_clone(
             check=True,
         )
 
-    subprocess.run(
-        ["git", "checkout", "-b", "Submission", commit],
-        cwd=dirname,
-        stdout=subprocess.DEVNULL,
-        check=True,
+    branch_exists = (
+        subprocess.run(
+            ["git", "rev-parse", "--verify", "--quiet", "refs/heads/Submission"],
+            cwd=dirname,
+            stdout=subprocess.DEVNULL,
+        ).returncode
+        == 0
     )
+
+    if branch_exists:
+        subprocess.run(
+            ["git", "checkout", "Submission"],
+            cwd=dirname,
+            stdout=subprocess.DEVNULL,
+            check=True,
+        )
+        subprocess.run(
+            ["git", "reset", "--hard", commit],
+            cwd=dirname,
+            stdout=subprocess.DEVNULL,
+            check=True,
+        )
+    else:
+        subprocess.run(
+            ["git", "checkout", "-b", "Submission", commit],
+            cwd=dirname,
+            stdout=subprocess.DEVNULL,
+            check=True,
+        )
 
     if run_docker:
         run_test_container(repository, commit, dirname / "test_output")
