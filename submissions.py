@@ -107,7 +107,17 @@ def do_build_docker():
     docker_folder = here / "docker"
 
     subprocess.run(
-        ["docker", "build", "-t", CONTAINER_NAME, str(docker_folder)],
+        [
+            "docker",
+            "build",
+            "--ssh",
+            "default",
+            "--build-arg",
+            f"SEMESTER={SEMESTER}",
+            "-t",
+            CONTAINER_NAME,
+            str(docker_folder),
+        ],
         cwd=here,
         check=True,
     )
